@@ -2,9 +2,8 @@ package br.ufpe.cin;
 
 import java.util.EnumSet;
 
-import org.ufpe.cin.config.IoTivityConfigurer;
-
 import br.ufpe.cin.airconditioner.AirControlee;
+import br.ufpe.cin.config.IoTivityConfigurer;
 import br.ufpe.cin.model.AirConditioner;
 
 public class Main {

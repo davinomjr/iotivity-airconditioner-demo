@@ -1,4 +1,4 @@
-package org.ufpe.cin.config;
+package br.ufpe.cin.config;
 
 import java.util.EnumSet;
 
