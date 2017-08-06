@@ -2,18 +2,19 @@ package br.ufpe.cin.config;
 
 import java.util.EnumSet;
 
-import br.ufpe.cin.OcAccountManager;
-import br.ufpe.cin.PlatformConfig;
-import br.ufpe.cin.account.OcException;
-import br.ufpe.cin.common.SignInManager;
+import org.iotivity.base.ModeType;
+import org.iotivity.base.OcAccountManager;
+import org.iotivity.base.OcConnectivityType;
+import org.iotivity.base.OcException;
+import org.iotivity.base.OcPlatform;
+import org.iotivity.base.PlatformConfig;
+import org.iotivity.base.QualityOfService;
+import org.iotivity.base.ServiceType;
 
-import java.util.concurrent.locks;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import br.ufpe.cin.account.SignInManager;
 
-	public static class IoTivityConfigurer {
-		
+	public class IoTivityConfigurer {
+	
 		private SignInManager mSignInManager;		
 		private String mUid;
 		private String mAccessToken;
@@ -65,10 +66,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 		}
 
 
-	public void static configurePlatform() {
+	public void configurePlatform() {
 		 PlatformConfig config = new PlatformConfig(
 	                ServiceType.IN_PROC,
-	                ModeType.BOTH,
+	                ModeType.CLIENT_SERVER,
 	                "0.0.0.0",
 	                0,
 	                QualityOfService.LOW
@@ -77,21 +78,21 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 		 OcPlatform.Configure(config);		
 	}
 	
-	public void static signIn(String accessToken, String uid) throws OcException{
+	public void signIn(String accessToken, String uid) throws OcException{
 			
 		OcAccountManager accountManager = OcPlatform
 									.constructAccountManagerObject(
-											this.host(), 
+											this.mHost, 
 											EnumSet.of(OcConnectivityType.CT_ADAPTER_TCP)
 								                );		
         if (uid == null) {
-            signInmanager = new SignInManager(manager,
+        	mSignInManager = new SignInManager(accountManager,
                     SignInManager.Provider.GITHUB,
                     accessToken);
         } else {
-            signInmanager = new SignInManager(manager, uid, accessToken);
+        	mSignInManager = new SignInManager(accountManager, uid, accessToken);
         }
                 
-        signInmanager.signIn();				
+        mSignInManager.signIn();				
 	}
 }

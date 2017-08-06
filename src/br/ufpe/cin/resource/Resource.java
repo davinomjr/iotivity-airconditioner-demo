@@ -1,25 +1,43 @@
 package br.ufpe.cin.resource;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
-import br.ufpe.cin.xa;
-import br.ufpe.cin.contract.EntityHandlerResult;
+import org.iotivity.base.EntityHandlerResult;
+import org.iotivity.base.OcException;
+import org.iotivity.base.OcPlatform;
+import org.iotivity.base.OcRepresentation;
+import org.iotivity.base.OcResourceHandle;
+import org.iotivity.base.OcResourceRequest;
+import org.iotivity.base.OcResourceResponse;
+import org.iotivity.base.RequestHandlerFlag;
+import org.iotivity.base.RequestType;
 
-public abstract class Resource implements OcPlatform.EntityHandler {
+import br.ufpe.cin.contract.IResource;
+
+public abstract class Resource implements OcPlatform.EntityHandler, IResource {
 	
-    private OcResourceHandle mHandle;
-    private String mResourceName;
+    protected String mResourceName;
+    protected OcResourceHandle mHandle;
     protected OcRepresentation mRepresentation;
     protected List<Resource> mChildResources;
 
     
-    protected abstract void init();
-    protected abstract EntityHandlerResult getResourceRepresentation(OcResourceRequest request);
-    protected abstract EntityHandlerResult setResourceRepresentation(OcResourceRequest request);
+    public OcRepresentation getRepresentation() {
+		return mRepresentation;
+	}
+	public void setRepresentation(OcRepresentation mRepresentation) {
+		this.mRepresentation = mRepresentation;
+	}
+	protected abstract EntityHandlerResult init();
+    protected abstract EntityHandlerResult getResourceRepresentation(OcResourceRequest request) throws OcException;
+    protected abstract EntityHandlerResult setResourceRepresentation(OcResourceRequest request) throws OcException;
     
 
     public Resource(String uri, List<String> resourceTypes, List<String> resourceInterfaces, String resourceName) {
     	this.mResourceName = resourceName;
+    	this.mChildResources = new ArrayList<Resource>();
         mRepresentation = new OcRepresentation();
         mRepresentation.setResourceTypes(resourceTypes);
         mRepresentation.setResourceTypes(resourceInterfaces);
@@ -29,7 +47,7 @@ public abstract class Resource implements OcPlatform.EntityHandler {
    
     @Override
     public EntityHandlerResult handleEntity(OcResourceRequest ocResourceRequest) {
-    	System.out.println(String.format("Server %s entity handler", mResourceName);	
+    	System.out.println(String.format("Server %s entity handler", mResourceName));	
         EntityHandlerResult ehResult = EntityHandlerResult.ERROR;
         if (ocResourceRequest == null) {
             return ehResult;
@@ -42,10 +60,20 @@ public abstract class Resource implements OcPlatform.EntityHandler {
         }
         
         if (requestFlags.contains(RequestHandlerFlag.REQUEST)) {
-            ehResult = handleRequest(ocResourceRequest);
+            try {
+				ehResult = handleRequest(ocResourceRequest);
+			} catch (OcException e) {
+				e.printStackTrace();
+				System.out.println("Error on request");
+			}
         }
 
         return ehResult;
+    }
+    
+    
+    public OcResourceHandle getResourceHandle() {
+    	return this.mHandle;
     }
 
     
@@ -54,13 +82,12 @@ public abstract class Resource implements OcPlatform.EntityHandler {
             OcPlatform.sendResponse(response);
             return EntityHandlerResult.OK;
         } catch (OcException e) {
-            Log.e("Error sending response:", e.toString());
             return EntityHandlerResult.ERROR;
         }
     }
 
     
-    protected EntityHandlerResult handleRequest(OcResourceRequest ocResourceRequest) {
+    protected EntityHandlerResult handleRequest(OcResourceRequest ocResourceRequest) throws OcException {
         EntityHandlerResult ehResult = EntityHandlerResult.ERROR;        
         RequestType requestType = ocResourceRequest.getRequestType();
         switch (requestType) {
@@ -75,5 +102,9 @@ public abstract class Resource implements OcPlatform.EntityHandler {
             	break;
         }
         return ehResult;
+    }
+    
+    public void addChildResource(Resource resource) {
+    	mChildResources.add(resource);
     }
 }

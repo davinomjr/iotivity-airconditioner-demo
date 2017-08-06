@@ -1,5 +1,8 @@
 package br.ufpe.cin.model;
 
+import org.iotivity.base.OcException;
+import org.iotivity.base.OcRepresentation;
+
 public class AirConditioner {
 
 	private boolean mIsOn;
@@ -12,7 +15,7 @@ public class AirConditioner {
 		this.mIsOn = false;
 	}
 	
-	public OcRepresentation serialize() {
+	public OcRepresentation serialize() throws OcException {
 	      OcRepresentation rep = new OcRepresentation();
 	      rep.setValue("isOn", mIsOn ? "Yes" : "NO");
 	      return rep;
@@ -21,5 +24,5 @@ public class AirConditioner {
 	public void toggleMode() {
 		this.mIsOn = !this.mIsOn;
 	}
-	
+
 }

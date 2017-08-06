@@ -1,5 +1,8 @@
 package br.ufpe.cin.model;
 
+import org.iotivity.base.OcException;
+import org.iotivity.base.OcRepresentation;
+
 public class BinarySwitch {
 	
 	private boolean mValue;
@@ -21,7 +24,7 @@ public class BinarySwitch {
 		this.mValue = !mValue;		
 	}
 	
-	public OcRepresentation serialize() {
+	public OcRepresentation serialize() throws OcException {
 		OcRepresentation rep = new OcRepresentation ();
 		rep.setValue("value", this.mValue);
 		return rep;

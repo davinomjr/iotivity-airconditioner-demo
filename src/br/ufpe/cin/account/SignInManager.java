@@ -3,12 +3,10 @@ package br.ufpe.cin.account;
 import java.util.List;
 import java.util.Map;
 
-import br.ufpe.cin.common.OcAccountManager;
-import br.ufpe.cin.common.OcException;
-import br.ufpe.cin.common.OcHeaderOption;
-import br.ufpe.cin.common.OcRepresentation;
-import br.ufpe.cin.common.SignInManager.Provider;
-
+import org.iotivity.base.OcAccountManager;
+import org.iotivity.base.OcException;
+import org.iotivity.base.OcHeaderOption;
+import org.iotivity.base.OcRepresentation;
 /**
  * Created on 31/07/17.
  */
